@@ -13,7 +13,9 @@ allow vold devpts:chr_file rw_file_perms;
 allow vold rootfs:dir mounton;
 allow vold sdcard_type:dir mounton;
 allow vold sdcard_type:filesystem { mount remount unmount };
-allow vold sdcard_posix:filesystem { relabelto relabelfrom };
+ifelse(shipping_build, `true', ,
+  allow vold sdcard_posix:filesystem { relabelto relabelfrom };
+)
 allow vold labeledfs:filesystem { relabelfrom };
 allow vold sdcard_type:dir create_dir_perms;
 allow vold sdcard_type:file create_file_perms;
@@ -90,6 +92,10 @@ binder_call(vold, healthd)
 
 # talk to keymaster
 allow vold tee_device:chr_file rw_file_perms;
+
+# Access userdata block device.
+allow vold userdata_block_device:blk_file rw_file_perms;
+auditallow vold userdata_block_device:blk_file rw_file_perms;
 
 # For UMS tuning
 allow vold proc_dirty_ratio:file rw_file_perms;
